@@ -22,11 +22,16 @@ def _process_input(source_img, scale_factor=1.0, output_stride=16):
     return input_img, source_img, scale
 
 
-def read_cap(cap, scale_factor=1.0, output_stride=16):
-    res, img = cap.read()
-    if not res:
-        raise IOError("webcam failure")
-    return _process_input(img, scale_factor, output_stride)
+def read_cap(cap, realsense=False, scale_factor=1.0, output_stride=16):
+    # not using realsense D435 camera
+    if realsense is False:
+        res, img = cap.read()
+        if not res:
+            raise IOError("webcam failure")
+        return _process_input(img, scale_factor, output_stride)
+    # using realsense D435 camera
+    else:
+        return _process_input(cap, scale_factor, output_stride)
 
 
 def read_imgfile(path, scale_factor=1.0, output_stride=16):
