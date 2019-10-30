@@ -1,3 +1,9 @@
+# SIMLAB INSTRUCTIONS
+in order to use on Moe, you must first make posenet point to the correct python distribution:
+` export PYTHONPATH="/home/moe/anaconda3/lib/python3.7/site-packages:/home/moe/catkin_ws/devel/lib/python2.7/dist-packages:/opt/ros/kinetic/lib/python2.7/dist-packages"`
+
+To run on the realsense instead of a default camera, add the flag --realsense=1
+
 ## PoseNet Pytorch
 
 This repository contains a PyTorch implementation (multi-pose only) of the Google TensorFlow.js Posenet model.
