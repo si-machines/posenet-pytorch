@@ -1,6 +1,14 @@
+# Node communication setup
+* edit PYTHONPATH - `export PYTHONPATH="/home/moe/anaconda3/lib/python3.7/site-packages:/home/moe/catkin_ws/devel/lib/python2.7/dist-packages:/opt/ros/kinetic/lib/python2.7/dist-packages"`
+* build the entire catkin_ws - `catkin_make`
+* source workspace - `source ~/catkin_ws/devel/setup.bash`
+* startup roscore - `roscore`
+* startup talker.py - `rosrun posenet_wrapper talker.py`
+* startup listener.py - `rosrun posenet_wrapper listener.py`
+
 # SIMLAB INSTRUCTIONS
 in order to use on Moe, you must first make posenet point to the correct python distribution:
-` export PYTHONPATH="/home/moe/anaconda3/lib/python3.7/site-packages:/home/moe/catkin_ws/devel/lib/python2.7/dist-packages:/opt/ros/kinetic/lib/python2.7/dist-packages"`
+`export PYTHONPATH="/home/moe/anaconda3/lib/python3.7/site-packages:/home/moe/catkin_ws/devel/lib/python2.7/dist-packages:/opt/ros/kinetic/lib/python2.7/dist-packages"`
 
 To run on the realsense instead of a default camera, add the flag --realsense=1
 
@@ -18,7 +26,7 @@ A suitable Python 3.x environment with a recent version of PyTorch is required. 
 
 If you want to use the webcam demo, a pip version of opencv (`pip install python-opencv=3.4.5.20`) is required instead of the conda version. Anaconda's default opencv does not include ffpmeg/VideoCapture support. The python bindings for OpenCV 4.0 currently have a broken impl of drawKeypoints so please force install a 3.4.x version.
 
-A fresh conda Python 3.6/3.7 environment with the following installs should suffice: 
+A fresh conda Python 3.6/3.7 environment with the following installs should suffice:
 ```
 conda install -c pytorch pytorch cudatoolkit
 pip install requests opencv-python==3.4.5.20
@@ -32,7 +40,7 @@ The first time these apps are run (or the library is used) model weights will be
 
 For all demos, the model can be specified with the '--model` argument by using its integer depth multiplier (50, 75, 100, 101). The default is the 101 model.
 
-#### image_demo.py 
+#### image_demo.py
 
 Image demo runs inference on an input folder of images and outputs those images with the keypoints and skeleton overlayed.
 
@@ -63,4 +71,3 @@ The Python conversion code that started me on my way was adapted from the CoreML
 * Comment interfaces, tensor dimensions, etc
 * Implement batch inference for image_demo
 * Create a training routine and add models with more advanced CNN backbones
-

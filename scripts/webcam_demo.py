@@ -1,3 +1,5 @@
+import sys
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import torch
 import cv2
 import time
@@ -18,6 +20,8 @@ parser.add_argument('--cam_height', type=int, default=720)
 parser.add_argument('--scale_factor', type=float, default=0.7125)
 args = parser.parse_args()
 
+def reshape(lst, n):
+    return [lst[i*n:(i+1)*n] for i in range(len(lst)//n)]
 
 def main():
     model = posenet.load_model(args.model)
@@ -66,6 +70,10 @@ def main():
                 keypoint_coords *= output_scale
 
                 # TODO this isn't particularly fast, use GL for drawing and display someday...
+                data = ["Pose Score", pose_scores[0],
+                        "Keypoint Coords", keypoint_coords[0],
+                        "Keypoint Scores", keypoint_scores[0]]
+                print(data)
                 overlay_image = posenet.draw_skel_and_kp(
                     display_image, pose_scores, keypoint_scores, keypoint_coords,
                     min_pose_score=0.15, min_part_score=0.1)
