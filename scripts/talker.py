@@ -53,7 +53,6 @@ import posenet
 import pyrealsense2 as rs
 sys.path.append('/opt/ros/kinetic/lib/python2.7/dist-packages')
 
-
 def talker():
     # setup model and camera
     model = posenet.load_model(101)
@@ -82,6 +81,7 @@ def talker():
             # Convert images to numpy arrays
             color_image = np.asanyarray(color_frame.get_data())
 
+            #480 by 640
             input_image, display_image, output_scale = posenet.read_cap(
                 color_image, realsense=True, scale_factor=0.7125, output_stride=output_stride)
 
