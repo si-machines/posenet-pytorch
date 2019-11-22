@@ -42,8 +42,15 @@ class Recorder(object):
         # print("K_Scores: ", data.keypoint_scores)
         # print("K_Coords: ", data.keypoint_coords)
 
-        Recorder.data_points.append(data)
-        recorder.draw_pose()
+        Recorder.data_points = [
+            data.header.frame_id,
+            data.pose_scores,
+            data.keypoint_scores,
+            data.keypoint_coords
+        ]
+        # save frame
+        recorder.save_data("pose_frame_" + data.header.frame_id)
+        # recorder.draw_pose()
         Recorder.idx = Recorder.idx + 1
 
     def enable_cb(self, enable):
@@ -55,8 +62,14 @@ class Recorder(object):
 
     # primitive data save function. TODO: convert pose data into JSON/CSV
     def save_data(self, file_name):
-        np.savetxt(file_name, Recorder.data_points, fmt="%s")
+        np.asarray(Recorder.data_points).dump(file_name)
         print("Data saved to", file_name)
+
+    # prints the frame given a valid file name. The frame is represented as a
+    # list of values. [integer, tuple, tuple, tuple]
+    def load_data(self, file_name):
+        frame = np.load(file_name, allow_pickle=True)
+        print(frame)
 
     def draw_pose(self):
         # print(Recorder.data_points[Recorder.idx].pose_scores)
@@ -92,7 +105,6 @@ class Recorder(object):
         recorder.enable_cb(False)
         print("End recording.")
 
-        recorder.save_data(file_name)
         end = input("Press enter to exit.")
 
 
