@@ -67,7 +67,7 @@ def talker():
     # start up the publisher and node
     pub = rospy.Publisher('chatter', Pose, queue_size=10)
     rospy.init_node('talker', anonymous=True)
-    rate = rospy.Rate(10) # 10hz
+    rate = rospy.Rate(3) # 10hz
     start = time.time()
     frame_count = 0
     try:
