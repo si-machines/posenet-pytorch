@@ -53,6 +53,8 @@ import posenet
 import pyrealsense2 as rs
 sys.path.append('/opt/ros/kinetic/lib/python2.7/dist-packages')
 
+FREQ = 5
+
 def talker():
     # setup model and camera
     model = posenet.load_model(101)
@@ -67,7 +69,7 @@ def talker():
     # start up the publisher and node
     pub = rospy.Publisher('chatter', Pose, queue_size=10)
     rospy.init_node('talker', anonymous=True)
-    rate = rospy.Rate(3) # 10hz
+    rate = rospy.Rate(FREQ) # 10hz
     start = time.time()
     frame_count = 0
     try:
@@ -115,11 +117,22 @@ def talker():
                 data = Pose()
                 data.header.frame_id    = str(frame_count)
                 data.header.stamp.secs  = int(time.time() - start)
-                data.pose_scores        = pose_scores[0].flatten().tolist()
-                data.keypoint_scores    = keypoint_scores[0].flatten().tolist()
+                data.pose_scores        = pose_scores[0:1].tolist()
+                data.keypoint_scores    = keypoint_scores[0].tolist()
                 data.keypoint_coords    = keypoint_coords[0].flatten().tolist()
                 rospy.loginfo(data)
                 pub.publish(data)
+
+                # print()
+                # print("_____________")
+                # print(pose_scores[0:1].tolist())
+                # print(keypoint_scores[0].tolist())
+                # print(type(keypoint_scores[0].tolist()))
+                # print(keypoint_coords[0].tolist())
+                # print(type(keypoint_coords[0].tolist()))
+                # print("_____________")
+                # print()
+
             rate.sleep()
             frame_count += 1
 

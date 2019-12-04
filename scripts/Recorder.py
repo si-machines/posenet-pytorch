@@ -13,12 +13,19 @@ import sys
 sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import time
 import datetime
+import argparse
 import numpy as np
 import posenet
 import cv2
 sys.path.append('/opt/ros/kinetic/lib/python2.7/dist-packages')
 
 PATH = "./src/posenet_wrapper/frame_data_example/"
+FREQ = 5
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--mode', type=int, default=0) # default multishot
+args = parser.parse_args()
+
 
 class Recorder(object):
     """
@@ -26,7 +33,10 @@ class Recorder(object):
     """
     lock = False
     data_points = []
-    empty_canvas = np.zeros((480,640))
+    empty_canvas = np.zeros([480,640,3])
+    empty_canvas[:,:,0] = np.ones([480,640])*64/255.0
+    empty_canvas[:,:,1] = np.ones([480,640])*128/255.0
+    empty_canvas[:,:,2] = np.ones([480,640])*192/255.0
 
     def __init__(self):
         # by default, the `Recorder` is not recording.
@@ -61,7 +71,7 @@ class Recorder(object):
         ]
 
         # display pose on screen
-        # recorder.draw_pose()
+        recorder.draw_pose()
         # prompt for label
         self.label_auto()
         # save frame
@@ -100,16 +110,30 @@ class Recorder(object):
         Uses the posenet draw_skel_and_kp function in order to reconstruct a pose onto a blank canvas.
         Currently has tuple issues with keypoint_scores and keypoint_coords.
         """
+
+        # unflatten keypoint coordinates
+        coords = []
+        ctr = 0
+        for dp in self.data_points[3]:
+            if ctr == 0:
+                coords.append([dp])
+            elif ctr == 1:
+                coords[len(coords)-1].append(dp)
+            else:
+                print("Error: bad ctr value(", ctr, ")")
+            ctr = (ctr + 1) % 2
+
+        # create overlay image
         # overlay_image = posenet.draw_skel_and_kp(
         #     self.empty_canvas,
-        #     list(self.data_points[1]),    # pose scores
-        #     [list(self.data_points[2])],    # keypoint scores
-        #     [[list(self.data_points[3])]],    # keypoint coords
+        #     np.asarray(list(self.data_points[1])),    # pose scores
+        #     np.asarray([list(self.data_points[2])]),    # keypoint scores
+        #     np.asarray([coords]),    # keypoint coords
         #     min_pose_score=0.15, min_part_score=0.1)
-
-        # Show images
-        cv2.namedWindow('posenet', cv2.WINDOW_AUTOSIZE)
-        cv2.imshow('posenet', overlay_image)
+        #
+        # # Show images
+        # cv2.namedWindow('posenet', cv2.WINDOW_AUTOSIZE)
+        # cv2.imshow('posenet', overlay_image)
 
     def label_self(self, file_name, label):
         """
@@ -128,7 +152,10 @@ class Recorder(object):
         self.data_points[4] = input("Enter a pose label: ")
         print(self.data_points)
 
-    def main_seq(self, prep_time, recording_time, file_name="data.txt"):
+    def main_seq(self, prep_time, recording_time, mode=0):
+        # default mode is multi-shot.
+        # mode=1 is single shot.
+
         # startup sequence: press enter to start a n second sequence
         start = input("Press enter to begin.")
         for sec in range(0, prep_time):
@@ -137,8 +164,13 @@ class Recorder(object):
 
         # begin recording period.
         self.enable_cb(True)
-        print("Recording. %3d second listening period begin." % recording_time)
-        time.sleep(recording_time)
+        if mode == 0:
+            print("Recording. %3d second listening period begin." % recording_time)
+            time.sleep(recording_time)
+        else:
+            print("Recording. Listening for a single frame.")
+            time.sleep(1/FREQ)
+
 
         # don't kill the remaining callbacks, if any, until all processes finish.
         while(self.lock):
@@ -149,4 +181,4 @@ class Recorder(object):
 
 if __name__ == '__main__':
     recorder = Recorder()
-    recorder.main_seq(3, 5, "pose_data.txt")
+    recorder.main_seq(3, 5, mode=args.mode)
