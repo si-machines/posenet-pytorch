@@ -33,9 +33,9 @@ class Classifier(object):
     library = []
 
     def __init__(self):
-        rospy.init_node('listener', anonymous=True)
+        rospy.init_node('classifier', anonymous=True)
         self.load_data(glob.glob(PATH))
-        # create subscriber
+        self.publisher = rospy.Publisher('classifications', String)
         self.subscriber = rospy.Subscriber('chatter', Pose, self.cb_classify)
 
     def cb_classify(self, data):
@@ -53,10 +53,8 @@ class Classifier(object):
         classified_pose = self.knn()
 
         # publish result to a topic
-        pub = rospy.Publisher('classifications', String)  # write here? or in initialization?
-        rospy.init_node('classifier', anonymous=True)
         rospy.loginfo(classified_pose)
-        pub.publish(classified_pose)
+        self.publisher.publish(classified_pose)
 
     def knn(self):
         # nearest neighbors implementation between captured pose and self.library
