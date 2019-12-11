@@ -26,17 +26,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--mode', type=int, default=0) # default multishot
 args = parser.parse_args()
 
-
 class Recorder(object):
     """
     The recorder class sets up a ROS subscriber node to listen to a specific publisher.
     """
     lock = False
     data_points = []
-    empty_canvas = np.zeros([480,640,3])
-    empty_canvas[:,:,0] = np.ones([480,640])*64/255.0
-    empty_canvas[:,:,1] = np.ones([480,640])*128/255.0
-    empty_canvas[:,:,2] = np.ones([480,640])*192/255.0
+    empty_canvas = np.zeros((480,640,3), dtype="uint8")
+    overlay_image = empty_canvas.copy()
 
     def __init__(self):
         # by default, the `Recorder` is not recording.
@@ -106,9 +103,7 @@ class Recorder(object):
 
     def draw_pose(self):
         """
-        TODO:
         Uses the posenet draw_skel_and_kp function in order to reconstruct a pose onto a blank canvas.
-        Currently has tuple issues with keypoint_scores and keypoint_coords.
         """
 
         # unflatten keypoint coordinates
@@ -124,16 +119,55 @@ class Recorder(object):
             ctr = (ctr + 1) % 2
 
         # create overlay image
-        # overlay_image = posenet.draw_skel_and_kp(
-        #     self.empty_canvas,
-        #     np.asarray(list(self.data_points[1])),    # pose scores
-        #     np.asarray([list(self.data_points[2])]),    # keypoint scores
-        #     np.asarray([coords]),    # keypoint coords
-        #     min_pose_score=0.15, min_part_score=0.1)
-        #
-        # # Show images
-        # cv2.namedWindow('posenet', cv2.WINDOW_AUTOSIZE)
-        # cv2.imshow('posenet', overlay_image)
+        self.overlay_image = posenet.draw_skel_and_kp(
+            self.empty_canvas,
+            np.asarray(list(self.data_points[1])),    # pose scores
+            np.asarray([list(self.data_points[2])]),    # keypoint scores
+            np.asarray([coords]),    # keypoint coords
+            min_pose_score=0.15, min_part_score=0.1)
+
+        # Show image
+        while(1):
+            cv2.namedWindow('posenet', cv2.WINDOW_AUTOSIZE)
+            cv2.imshow('posenet', self.overlay_image)
+            k = cv2.waitKey(0) & 0xFF
+            if (k == 27 or k == 32 or k == 113):
+                break;
+        cv2.destroyAllWindows()
+
+    def draw_pose_2(self, frame):
+        """
+        Uses the posenet draw_skel_and_kp function in order to reconstruct a pose onto a blank canvas.
+        """
+
+        # unflatten keypoint coordinates
+        coords = []
+        ctr = 0
+        for dp in frame[3]:
+            if ctr == 0:
+                coords.append([dp])
+            elif ctr == 1:
+                coords[len(coords)-1].append(dp)
+            else:
+                print("Error: bad ctr value(", ctr, ")")
+            ctr = (ctr + 1) % 2
+
+        # create overlay image
+        image = posenet.draw_skel_and_kp(
+            self.empty_canvas,
+            np.asarray(list(frame[1])),    # pose scores
+            np.asarray([list(frame[2])]),    # keypoint scores
+            np.asarray([coords]),    # keypoint coords
+            min_pose_score=0.15, min_part_score=0.1)
+
+        # Show image
+        while(1):
+            cv2.namedWindow('posenet', cv2.WINDOW_AUTOSIZE)
+            cv2.imshow('posenet', self.overlay_image)
+            k = cv2.waitKey(0) & 0xFF
+            if (k == 27 or k == 32 or k == 113):
+                break;
+        cv2.destroyAllWindows()
 
     def label_self(self, file_name, label):
         """
@@ -170,7 +204,6 @@ class Recorder(object):
         else:
             print("Recording. Listening for a single frame.")
             time.sleep(1/FREQ)
-
 
         # don't kill the remaining callbacks, if any, until all processes finish.
         while(self.lock):

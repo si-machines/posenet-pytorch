@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
 #
 # Classifier.py
 # Author: Michelle Wen
@@ -35,8 +35,10 @@ class Classifier(object):
     def __init__(self):
         rospy.init_node('classifier', anonymous=True)
         self.load_data(glob.glob(PATH))
-        self.publisher = rospy.Publisher('classifications', String)
+        self.publisher = rospy.Publisher('classifications', String, queue_size=10)
         self.subscriber = rospy.Subscriber('chatter', Pose, self.cb_classify)
+
+        rospy.spin()
 
     def cb_classify(self, data):
         """

@@ -84,12 +84,6 @@ def draw_skel_and_kp(
         img, instance_scores, keypoint_scores, keypoint_coords,
         min_pose_score=0.5, min_part_score=0.5):
 
-    print()
-    print("_____________")
-    print(instance_scores)
-    print(keypoint_scores)
-    print(keypoint_coords)
-
     out_img = img
     adjacent_keypoints = []
     cv_keypoints = []
