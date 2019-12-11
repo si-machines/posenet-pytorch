@@ -152,6 +152,10 @@ class Recorder(object):
                 print("Error: bad ctr value(", ctr, ")")
             ctr = (ctr + 1) % 2
 
+        print(list(frame[1]))
+        print(list(frame[2]))
+        print([coords])
+
         # create overlay image
         image = posenet.draw_skel_and_kp(
             self.empty_canvas,
@@ -163,7 +167,7 @@ class Recorder(object):
         # Show image
         while(1):
             cv2.namedWindow('posenet', cv2.WINDOW_AUTOSIZE)
-            cv2.imshow('posenet', self.overlay_image)
+            cv2.imshow('posenet', image)
             k = cv2.waitKey(0) & 0xFF
             if (k == 27 or k == 32 or k == 113):
                 break;
