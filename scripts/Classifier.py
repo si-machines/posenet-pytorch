@@ -24,7 +24,7 @@ import cv2
 #sys.path.remove("/home/${USER}/anaconda3/lib/python3.7/site-packages")
 sys.path.append('/opt/ros/kinetic/lib/python2.7/dist-packages')
 
-PATH = "/home/michellewen/catkin_ws/src/posenet-pytorch/frame_data_example"
+PATH = "/home/matthewyu/catkin_ws/src/posenet_wrapper/frame_data_example"
 FREQ = 5
 
 parser = argparse.ArgumentParser()
@@ -84,7 +84,7 @@ class Classifier(object):
         """
         raw_coords_list = self.data_points[3]
         dist_table = []
-        k = 15
+        k = 2
         k_nearest_labels = []
 
         for labeled_pose in self.library:
