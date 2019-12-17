@@ -151,12 +151,12 @@ def talker():
         rospy.init_node('talker', anonymous=True)
         rate = rospy.Rate(FREQ) # 10hz
         start = time.time()
-        frame_count = 0      
+        frame_count = 0
         try:
             while not rospy.is_shutdown():
                 #480 by 640
                 input_image, display_image, output_scale = posenet.read_cap(
-                    color_image, scale_factor=0.7125, output_stride=output_stride)
+                    cap, scale_factor=0.7125, output_stride=output_stride)
 
                 with torch.no_grad():
                     input_image = torch.Tensor(input_image)
@@ -197,7 +197,7 @@ def talker():
                 frame_count += 1
 
         finally:
-            pub.publish("Shutting down.")          
+            pub.publish("Shutting down.")
 
 
 if __name__ == '__main__':
