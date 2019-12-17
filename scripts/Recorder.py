@@ -3,7 +3,7 @@
 # Recorder.py
 # Class to faciliate listener functions for posenet_wrapper ROS package.
 # Author: Matthew Yu
-# Last Modified: 11/20/19
+# Last Modified: 12/17/19
 # Organization: UT Austin SIMLab
 
 import rospy
@@ -40,7 +40,7 @@ class Recorder(object):
         self.recording = False
 
         rospy.init_node('listener', anonymous=True)
-        self.subscriber = rospy.Subscriber('chatter', Pose, self.cb_pose)
+        self.subscriber = rospy.Subscriber('posenet', Pose, self.cb_pose)
         print(self.subscriber)
 
     def cb_pose(self, data):

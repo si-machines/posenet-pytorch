@@ -40,7 +40,7 @@ class Classifier(object):
         rospy.init_node('classifier', anonymous=True)
         self.load_data(PATH)
         self.publisher = rospy.Publisher('classifications', String, queue_size=10)
-        self.subscriber = rospy.Subscriber('chatter', Pose, self.cb_classify)
+        self.subscriber = rospy.Subscriber('posenet', Pose, self.cb_classify)
 
         rospy.spin()
 

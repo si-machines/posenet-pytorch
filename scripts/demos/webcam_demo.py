@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+#
+# webcam_demo.py
+# Class to faciliate listener functions for posenet_wrapper ROS package.
+# Author: Matthew Yu
+# Last Modified: 12/17/19
+# Organization: UT Austin SIMLab
+
 import sys
 sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import torch
@@ -19,9 +27,6 @@ parser.add_argument('--cam_width', type=int, default=1280)
 parser.add_argument('--cam_height', type=int, default=720)
 parser.add_argument('--scale_factor', type=float, default=0.7125)
 args = parser.parse_args()
-
-def reshape(lst, n):
-    return [lst[i*n:(i+1)*n] for i in range(len(lst)//n)]
 
 def main():
     model = posenet.load_model(args.model)
