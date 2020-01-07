@@ -3,21 +3,22 @@
 # Recorder.py
 # Class to faciliate listener functions for posenet_wrapper ROS package.
 # Author: Matthew Yu
-# Last Modified: 12/17/19
+# Last Modified: 1/7/20
 # Organization: UT Austin SIMLab
+DIST = 'melodic' # replace based on current ROS distribution (melodic, etc)
 
 import rospy
 from posenet_wrapper.msg import Pose
 
 import sys
-sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+sys.path.remove('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
 import time
 import datetime
 import argparse
 import numpy as np
 import posenet
 import cv2
-sys.path.append('/opt/ros/kinetic/lib/python2.7/dist-packages')
+sys.path.append('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
 
 PATH = "./src/posenet_wrapper/frame_data_example/"
 FREQ = 5
@@ -187,7 +188,7 @@ class Recorder(object):
         adds a label to the most recently taken pose frame.
         does not check for similar pose labels.
         """
-        self.data_points[4] = input("Enter a pose label: ")
+        self.data_points[4] = raw_input("Enter a pose label: ")
         print(self.data_points)
 
     def main_seq(self, prep_time, recording_time, mode=0):
@@ -195,7 +196,7 @@ class Recorder(object):
         # mode=1 is single shot.
 
         # startup sequence: press enter to start a n second sequence
-        start = input("Press enter to begin.")
+        start = raw_input("Press enter to begin.")
         for sec in range(0, prep_time):
             print("Starting sequence in %3d seconds." % (prep_time-sec))
             time.sleep(1)
@@ -214,7 +215,7 @@ class Recorder(object):
             self.enable_cb(False)
 
         print("End recording.")
-        end = input("Press enter to exit.")
+        end = raw_input("Press enter to exit.")
 
 if __name__ == '__main__':
     recorder = Recorder()

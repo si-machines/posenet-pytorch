@@ -1,18 +1,3 @@
-# Node communication setup
-* edit PYTHONPATH - `export PYTHONPATH="/home/moe/anaconda3/lib/python3.7/site-packages:/home/moe/catkin_ws/devel/lib/python2.7/dist-packages:/opt/ros/kinetic/lib/python2.7/dist-packages"`
-* build the entire catkin_ws - `catkin_make`
-* source workspace - `source ~/catkin_ws/devel/setup.bash`
-* startup roscore - `roscore`
-* startup talker.py - `rosrun posenet_wrapper talker.py`
-* startup listener.py - `rosrun posenet_wrapper listener.py`
-
-# SIMLAB INSTRUCTIONS
-in order to use on Moe, you must first make posenet point to the correct python distribution:
-`export PYTHONPATH="/home/moe/anaconda3/lib/python3.7/site-packages:/home/moe/catkin_ws/devel/lib/python2.7/dist-packages:/opt/ros/kinetic/lib/python2.7/dist-packages"`
-
-# webcam_demo.py
-To run on the realsense instead of a default camera, add the flag --realsense=1
-
 ## PoseNet Pytorch
 
 This repository contains a PyTorch implementation (multi-pose only) of the Google TensorFlow.js Posenet model.
@@ -20,18 +5,6 @@ This repository contains a PyTorch implementation (multi-pose only) of the Googl
 This port is based on my Tensorflow Python (https://github.com/rwightman/posenet-python) conversion of the same model. An additional step of the algorithm was performed on the GPU in this implementation so it is faster and consumes less CPU (but more GPU). On a GTX 1080 Ti (or better) it can run over 130fps.
 
 Further optimization is possible as the MobileNet base models have a throughput of 200-300 fps.
-
-### Install
-
-A suitable Python 3.x environment with a recent version of PyTorch is required. Development and testing was done with Python 3.7.1 and PyTorch 1.0 w/ CUDA10 from Conda.
-
-If you want to use the webcam demo, a pip version of opencv (`pip install python-opencv=3.4.5.20`) is required instead of the conda version. Anaconda's default opencv does not include ffpmeg/VideoCapture support. The python bindings for OpenCV 4.0 currently have a broken impl of drawKeypoints so please force install a 3.4.x version.
-
-A fresh conda Python 3.6/3.7 environment with the following installs should suffice:
-```
-conda install -c pytorch pytorch cudatoolkit
-pip install requests opencv-python==3.4.5.20
-```
 
 ### Usage
 

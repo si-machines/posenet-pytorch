@@ -2,9 +2,10 @@
 #
 # Classifier.py
 # Author: Michelle Wen
-# Last Modified: 12/10/19
+# Last Modified: 1/7/2020
 # Organization: UT Austin SIMLab
-
+DIST = 'melodic' # replace based on current ROS distribution (melodic, etc)
+USER = 'matthewyu'
 import rospy
 from posenet_wrapper.msg import Pose
 from std_msgs.msg import String
@@ -12,7 +13,7 @@ from std_msgs.msg import String
 import sys
 import os
 
-sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+sys.path.remove('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
 #sys.path.append("/home/${USER}/anaconda3/lib/python3.7/site-packages")
 import glob
 import argparse
@@ -22,9 +23,9 @@ import statistics
 import posenet
 import cv2
 #sys.path.remove("/home/${USER}/anaconda3/lib/python3.7/site-packages")
-sys.path.append('/opt/ros/kinetic/lib/python2.7/dist-packages')
+sys.path.append('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
 
-PATH = "/home/matthewyu/catkin_ws/src/posenet_wrapper/frame_data_example"
+PATH = "/home/" + USER + "/catkin_ws/src/posenet_wrapper/frame_data_example"
 FREQ = 5
 
 parser = argparse.ArgumentParser()

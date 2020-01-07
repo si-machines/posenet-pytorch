@@ -14,3 +14,8 @@
 * how to normalize difference between taller and shorter people?
 * how to normalize difference in position globally?
 * how to normalize difference in perspective?
+* melodic setup:
+  * `ImportError: No module named converter.tfjs2pytorch` coming from posenet.load_model(101) - rosrun is running the executable from a weird place
+  * similar issue with Recorder.py and trying to save data to *frame_data_example*
+
+

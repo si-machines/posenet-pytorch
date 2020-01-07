@@ -3,11 +3,17 @@
 # webcam_demo.py
 # Class to faciliate listener functions for posenet_wrapper ROS package.
 # Author: Matthew Yu
-# Last Modified: 12/17/19
+# Last Modified: 1/7/2020
 # Organization: UT Austin SIMLab
 
 import sys
-sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+try:
+    sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+    sys.path.remove('/opt/ros/melodic/lib/python2.7/dist-packages')
+
+except:
+    print("Kinetic/Melodic python dist not found. Continuing.")
+    
 import torch
 import cv2
 import time
@@ -96,6 +102,7 @@ def main():
             print('Average FPS: ', frame_count / (time.time() - start))
 
     else:
+        print("Running webcam_demo on host camera.")
         cap = cv2.VideoCapture(args.cam_id)
         cap.set(3, args.cam_width)
         cap.set(4, args.cam_height)
@@ -127,8 +134,8 @@ def main():
             overlay_image = posenet.draw_skel_and_kp(
                 display_image, pose_scores, keypoint_scores, keypoint_coords,
                 min_pose_score=0.15, min_part_score=0.1)
-
             cv2.imshow('posenet', overlay_image)
+
             frame_count += 1
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
