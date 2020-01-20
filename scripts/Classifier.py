@@ -2,10 +2,10 @@
 #
 # Classifier.py
 # Author: Michelle Wen
-# Last Modified: 1/7/2020
+# Last Modified: 1/20/2020
 # Organization: UT Austin SIMLab
-DIST = 'melodic' # replace based on current ROS distribution (melodic, etc)
-USER = 'matthewyu'
+DIST = 'kinetic' # replace based on current ROS distribution (melodic, etc)
+USER = 'michellewen'
 import rospy
 from posenet_wrapper.msg import Pose
 from std_msgs.msg import String
@@ -55,11 +55,16 @@ class Classifier(object):
             data.keypoint_scores,
             data.keypoint_coords
         ]
+
+        # center the keypoints
+        adjusted_points = posenet.center_of_gravity(self.data_points[3])
+
         # nearest neighbors
-        classified_pose = self.knn()
+        classified_pose = self.knn(adjusted_points)
 
         # publish result to a topic
-        rospy.loginfo(classified_pose)
+        print("Classified pose: " + classified_pose)
+        # rospy.loginfo(classified_pose)
         self.publisher.publish(classified_pose)
 
         """
@@ -79,19 +84,21 @@ class Classifier(object):
         string]     # label
         """
 
-    def knn(self):
+    def knn(self, coord_points):
         """
         nearest neighbors implementation between captured pose and self.library
         """
-        raw_coords_list = self.data_points[3]
+        # raw_coords_list = self.data_points[3]
+        raw_coords_list = coord_points
         dist_table = []
         k = 2
         k_nearest_labels = []
 
         for labeled_pose in self.library:
-            total_distance = 0
-            labeled_coords_list = labeled_pose[3]
-            for rawX, rawY, labeledX, labeledY, labeled_keyscore in zip(raw_coords_list[0::2], raw_coords_list[1::2], labeled_coords_list[0::2], labeled_coords_list[1::2], labeled_pose[2]):
+            total_distance = 0  # centers keypoints after grabbing original keypoints from frame_data_example
+            labeled_coords_list = posenet.center_of_gravity(labeled_pose[3])
+            for rawX, rawY, labeledX, labeledY, labeled_keyscore in zip(raw_coords_list[0::2],
+            raw_coords_list[1::2], labeled_coords_list[0::2], labeled_coords_list[1::2], labeled_pose[2]):
                 # distance between 2 coordinates
                 distance = math.sqrt(((rawX - labeledX) ** 2) + ((rawY - labeledY) ** 2))
                 distance *= labeled_keyscore
@@ -122,7 +129,7 @@ class Classifier(object):
         - each frame is represented as a list of values [integer, tuple, tuple, tuple, string]
         """
         for file_name in os.listdir(path_name):
-            file_path = PATH + '/' + file_name
+            file_path = path_name + '/' + file_name
             try:
                 frame = np.load(file_path, allow_pickle=True)
                 self.library.append(frame)
