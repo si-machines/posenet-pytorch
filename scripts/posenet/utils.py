@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
+import os
 import posenet.constants
-
 
 def valid_resolution(width, height, output_stride=16):
     target_width = (int(width) // output_stride) * output_stride + 1
@@ -106,3 +106,31 @@ def draw_skel_and_kp(
             flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
     out_img = cv2.polylines(out_img, adjacent_keypoints, isClosed=False, color=(255, 255, 0))
     return out_img
+
+def center_of_gravity(keypoint_coords): # returns list of centered keypoints
+    total_x = total_y = 0
+    for x,y in zip(keypoint_coords[0::2], keypoint_coords[1::2]):
+        total_x += x
+        total_y += y
+    center_x = total_x / float(17)
+    center_y = total_y / float(17)
+
+    adjusted_list = []
+    for x,y in zip(keypoint_coords[0::2], keypoint_coords[1::2]):
+        x -= center_x
+        y -= center_y
+        adjusted_list.append(x)
+        adjusted_list.append(y)
+
+    return tuple(adjusted_list)
+
+# example: path_name = "/home/" + USER + "/catkin_ws/src/posenet_wrapper/frame_data_example"
+def list_saved_poses(path_name):
+    print("Saved poses: ")
+    for file_name in os.listdir(path_name):
+        file_path = path_name + '/' + file_name
+        try:
+            frame = np.load(file_path, allow_pickle=True)
+            print(frame[4])
+        except:
+            pass
