@@ -5,6 +5,7 @@
 * recorder.py - data sampling
   * take more data sampling and add to set
   * call center_of_gravity function - either center keypoints immediately after receiving data points (drawn pose will be centered) or only center before saving into frame_data_example (currently, Classifier.py centers keypoints after grabbing original data from frame_data_example) 
+  * have option for user to choose to list saved data
 * classifier.py - preprocessing
   * look into different types of clustering algorithms after knn
 
