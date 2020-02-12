@@ -25,7 +25,8 @@ Setup ROS (Kinetic/Melodic)
 6. Follow **Basic Setup** instructions.
 
 # Basic Setup
-* edit PYTHONPATH - `export PYTHONPATH="/home/{USER}/anaconda3/lib/python3.7/site-packages:/home/{USER}/catkin_ws/devel/lib/python2.7/dist-packages:/opt/ros/kinetic/lib/python2.7/dist-packages"`
+* define $USER, $DIST in your .bashrc (i.e. matthew, melodic)
+* edit PYTHONPATH - `export PYTHONPATH="/home/{USER}/anaconda3/lib/python3.7/site-packages:/home/{USER}/catkin_ws/devel/lib/python2.7/dist-packages:/opt/ros/{DIST}/lib/python2.7/dist-packages"`
 * build the entire catkin_ws - `catkin_make`
 * source workspace - `source ~/catkin_ws/devel/setup.bash`
 * startup roscore - `roscore`
