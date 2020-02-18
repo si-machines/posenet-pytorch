@@ -25,7 +25,7 @@ import cv2
 #sys.path.remove("/home/${USER}/anaconda3/lib/python3.7/site-packages")
 sys.path.append('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
 
-PATH = "/home/" + USER + "/catkin_ws/src/posenet_wrapper/frame_data_example"
+PATH = "./src/posenet_wrapper/frame_data_example"
 FREQ = 5
 
 parser = argparse.ArgumentParser()
@@ -91,7 +91,7 @@ class Classifier(object):
         # raw_coords_list = self.data_points[3]
         raw_coords_list = coord_points
         dist_table = []
-        k = 2
+        k = 3
         k_nearest_labels = []
 
         for labeled_pose in self.library:

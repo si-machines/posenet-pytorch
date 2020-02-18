@@ -124,6 +124,30 @@ def center_of_gravity(keypoint_coords): # returns list of centered keypoints
 
     return tuple(adjusted_list)
 
+def center_of_gravity_2(keypoint_coords, SCREEN_WIDTH, SCREEN_HEIGHT):
+    print(keypoint_coords)
+    total_x = total_y = 0
+    # for x,y in zip(keypoint_coords[0::2], keypoint_coords[1::2]):
+    for part in keypoint_coords:
+        total_x += part[0]
+        total_y += part[1]
+    center_x = total_x / float(17)
+    center_y = total_y / float(17)
+
+    adjusted_list = []
+    # for x,y in zip(keypoint_coords[0::2], keypoint_coords[1::2]):
+    for part in keypoint_coords:
+        total_x += part[0]
+        total_y += part[1]
+        part[0] -= center_x
+        part[1] -= center_y
+        entry = []
+        entry.append(part[0]+SCREEN_WIDTH/2)
+        entry.append(part[1]+SCREEN_HEIGHT/2)
+        adjusted_list.append(entry)
+    # return tuple(adjusted_list)
+    print(adjusted_list)
+    return adjusted_list
 # example: path_name = "/home/" + USER + "/catkin_ws/src/posenet_wrapper/frame_data_example"
 def list_saved_poses(path_name):
     print("Saved poses: ")

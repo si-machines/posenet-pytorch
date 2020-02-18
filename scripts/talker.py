@@ -6,7 +6,7 @@
 # Last Modified: 1/7/20
 # Organization: UT Austin SIMLab
 
-DIST = 'melodic' # replace based on current ROS distribution (melodic, etc)
+DIST = 'kinetic' # replace based on current ROS distribution (melodic, etc)
 
 
 import rospy
@@ -95,16 +95,22 @@ def talker():
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
 
-                # filter out empty frames with no identifiable poses
+                # grab only the first pose, if it exists
                 if(pose_scores[0] != 0.0):
-                    data = Pose()
-                    data.header.frame_id    = str(frame_count)
-                    data.header.stamp.secs  = int(time.time() - start)
-                    data.pose_scores        = pose_scores[0:1].tolist()
-                    data.keypoint_scores    = keypoint_scores[0].tolist()
-                    data.keypoint_coords    = keypoint_coords[0].flatten().tolist()
-                    rospy.loginfo(data)
-                    pub.publish(data)
+                    # filter out incomplete frames
+                    complete = True
+                    for part in keypoint_scores[0]:
+                        if(part <= .4): # .4 is an arbitrary threshold in which a part can be identified as part of the pose with 40% confidence.
+                            complete = False
+                    if(complete):
+                        data = Pose()
+                        data.header.frame_id    = str(frame_count)
+                        data.header.stamp.secs  = int(time.time() - start)
+                        data.pose_scores        = pose_scores[0:1].tolist()
+                        data.keypoint_scores    = keypoint_scores[0].tolist()
+                        data.keypoint_coords    = keypoint_coords[0].flatten().tolist()
+                        rospy.loginfo(data)
+                        pub.publish(data)
 
                 rate.sleep()
                 frame_count += 1
@@ -155,19 +161,22 @@ def talker():
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
 
-                # filter out empty frames with no identifiable poses
+                # grab only the first pose, if it exists
                 if(pose_scores[0] != 0.0):
-                    data = Pose()
-                    data.header.frame_id    = str(frame_count)
-                    data.header.stamp.secs  = int(time.time() - start)
-                    data.pose_scores        = pose_scores[0:1].tolist()
-                    data.keypoint_scores    = keypoint_scores[0].tolist()
-                    data.keypoint_coords    = keypoint_coords[0].flatten().tolist()
-                    rospy.loginfo(data)
-                    pub.publish(data)
-
-                rate.sleep()
-                frame_count += 1
+                    # filter out incomplete frames
+                    complete = True
+                    for part in keypoint_scores[0]:
+                        if(part <= .4): # .4 is an arbitrary threshold in which a part can be identified as part of the pose with 40% confidence.
+                            complete = False
+                    if(complete):
+                        data = Pose()
+                        data.header.frame_id    = str(frame_count)
+                        data.header.stamp.secs  = int(time.time() - start)
+                        data.pose_scores        = pose_scores[0:1].tolist()
+                        data.keypoint_scores    = keypoint_scores[0].tolist()
+                        data.keypoint_coords    = keypoint_coords[0].flatten().tolist()
+                        rospy.loginfo(data)
+                        pub.publish(data)
 
         finally:
             pub.publish("Shutting down.")

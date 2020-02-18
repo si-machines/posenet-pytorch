@@ -1,13 +1,21 @@
 # Posenet ROS Wrapper
 ## Tasks:
-* talker.py - preprocessing
-  * only send frame if all 17 points are found
 * recorder.py - data sampling
-  * take more data sampling and add to set
-  * call center_of_gravity function - either center keypoints immediately after receiving data points (drawn pose will be centered) or only center before saving into frame_data_example (currently, Classifier.py centers keypoints after grabbing original data from frame_data_example) 
-  * have option for user to choose to list saved data
+  - [x] take more data sampling and add to set
+  - [x] call center_of_gravity function - either center keypoints immediately after receiving data points (drawn pose will be centered) or only center before saving into frame_data_example (currently, Classifier.py centers keypoints after grabbing original data from frame_data_example)
+  - [] have option for user to choose to list saved data
 * classifier.py - preprocessing
-  * look into different types of clustering algorithms after knn
+  - [] look into different types of clustering algorithms after knn
+* Explore UT demo
+  - [] get algorithm to run on Poli2
+    - display name of pose on external monitor(?)
+    - display name of pose on Poli2's screen
+  - [] change robot face in response to specific poses
+* optimizing KNN algorithm
+  - [] asymmetric tolerance - flip every image horizontally and run KNN twice; take the best result
+  - [] limb scaling - take an average ratio of limbs given current data; for new data take the length of one limb (say the torso) and scale all limbs according to that
+
+
 
 ### issues:
 * how to normalize difference between taller and shorter people?
@@ -16,5 +24,3 @@
 * melodic setup:
   * `ImportError: No module named converter.tfjs2pytorch` coming from posenet.load_model(101) - rosrun is running the executable from a weird place
   * similar issue with Recorder.py and trying to save data to *frame_data_example*
-
-

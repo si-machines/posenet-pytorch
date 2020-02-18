@@ -5,7 +5,7 @@
 # Author: Matthew Yu
 # Last Modified: 1/7/20
 # Organization: UT Austin SIMLab
-DIST = 'melodic' # replace based on current ROS distribution (melodic, etc)
+DIST = 'kinetic' # replace based on current ROS distribution (melodic, etc)
 
 import rospy
 from posenet_wrapper.msg import Pose
@@ -22,6 +22,8 @@ sys.path.append('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
 
 PATH = "./src/posenet_wrapper/frame_data_example/"
 FREQ = 5
+SCREEN_WIDTH=480
+SCREEN_HEIGHT=640
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--mode', type=int, default=0) # default multishot
@@ -33,7 +35,7 @@ class Recorder(object):
     """
     lock = False
     data_points = []
-    empty_canvas = np.zeros((480,640,3), dtype="uint8")
+    empty_canvas = np.zeros((SCREEN_WIDTH,SCREEN_HEIGHT,3), dtype="uint8")
     overlay_image = empty_canvas.copy()
 
     def __init__(self):
@@ -68,6 +70,8 @@ class Recorder(object):
             label
         ]
 
+        # center pose to screen
+        self.data_points[3] = posenet.center_of_gravity(data.keypoint_coords)
         # display pose on screen
         recorder.draw_pose()
         # prompt for label
@@ -124,7 +128,7 @@ class Recorder(object):
             self.empty_canvas,
             np.asarray(list(self.data_points[1])),    # pose scores
             np.asarray([list(self.data_points[2])]),    # keypoint scores
-            np.asarray([coords]),    # keypoint coords
+            np.asarray([posenet.center_of_gravity_2(coords,SCREEN_WIDTH,SCREEN_HEIGHT)]),    # keypoint coords
             min_pose_score=0.15, min_part_score=0.1)
 
         # Show image
@@ -188,7 +192,7 @@ class Recorder(object):
         adds a label to the most recently taken pose frame.
         does not check for similar pose labels.
         """
-        self.data_points[4] = raw_input("Enter a pose label: ")
+        self.data_points[4] = input("Enter a pose label: ")
         print(self.data_points)
 
     def main_seq(self, prep_time, recording_time, mode=0):
@@ -196,7 +200,7 @@ class Recorder(object):
         # mode=1 is single shot.
 
         # startup sequence: press enter to start a n second sequence
-        start = raw_input("Press enter to begin.")
+        start = input("Press enter to begin.")
         for sec in range(0, prep_time):
             print("Starting sequence in %3d seconds." % (prep_time-sec))
             time.sleep(1)
@@ -215,8 +219,8 @@ class Recorder(object):
             self.enable_cb(False)
 
         print("End recording.")
-        end = raw_input("Press enter to exit.")
+        end = input("Press enter to exit.")
 
 if __name__ == '__main__':
     recorder = Recorder()
-    recorder.main_seq(3, 5, mode=args.mode)
+    recorder.main_seq(3, 11, mode=args.mode)
