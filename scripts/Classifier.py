@@ -96,7 +96,8 @@ class Classifier(object):
 
         for labeled_pose in self.library:
             total_distance = 0  # centers keypoints after grabbing original keypoints from frame_data_example
-            labeled_coords_list = posenet.center_of_gravity(labeled_pose[3])
+            # labeled_coords_list = posenet.center_of_gravity(labeled_pose[3])
+            labeled_coords_list = labeled_pose[3]   # assuming poses in library are centered
             for rawX, rawY, labeledX, labeledY, labeled_keyscore in zip(raw_coords_list[0::2],
             raw_coords_list[1::2], labeled_coords_list[0::2], labeled_coords_list[1::2], labeled_pose[2]):
                 # distance between 2 coordinates
