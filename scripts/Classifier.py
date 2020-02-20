@@ -5,7 +5,7 @@
 # Last Modified: 1/20/2020
 # Organization: UT Austin SIMLab
 DIST = 'kinetic' # replace based on current ROS distribution (melodic, etc)
-USER = 'michellewen'
+USER = 'moe'
 import rospy
 from posenet_wrapper.msg import Pose
 from std_msgs.msg import String
@@ -25,7 +25,7 @@ import cv2
 #sys.path.remove("/home/${USER}/anaconda3/lib/python3.7/site-packages")
 sys.path.append('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
 
-PATH = "./src/posenet_wrapper/frame_data_example"
+PATH = "../frame_data_example"
 FREQ = 5
 
 parser = argparse.ArgumentParser()

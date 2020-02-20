@@ -3,18 +3,19 @@
 * recorder.py - data sampling
   - [x] take more data sampling and add to set
   - [x] call center_of_gravity function - either center keypoints immediately after receiving data points (drawn pose will be centered) or only center before saving into frame_data_example (currently, Classifier.py centers keypoints after grabbing original data from frame_data_example)
-  - [] have option for user to choose to list saved data
+  - [ ] have option for user to choose to list saved data
 * classifier.py - preprocessing
-  - [] look into different types of clustering algorithms after knn
+  - [ ] look into different types of clustering algorithms after knn
 * Explore UT demo
-  - [] get algorithm to run on Poli2
-    - display name of pose on external monitor(?)
-    - display name of pose on Poli2's screen
-  - [] change robot face in response to specific poses
+  - [x] get algorithm to run on Poli2
+    - [x] display name of pose on external monitor(?)
+    - [ ] display name of pose on Poli2's screen
+  - [ ] change robot face in response to specific poses
 * optimizing KNN algorithm
-  - [] asymmetric tolerance - flip every image horizontally and run KNN twice; take the best result
-  - [] limb scaling - take an average ratio of limbs given current data; for new data take the length of one limb (say the torso) and scale all limbs according to that
-
+  - [ ] asymmetric tolerance - flip every image horizontally and run KNN twice; take the best result
+  - [ ] limb scaling - take an average ratio of limbs given current data; for new data take the length of one limb (say the torso) and scale all limbs according to that
+* Data
+  - [ ] reconfigure talker.py to accept still frames of poses and send them to Recorder.py to build a better data set
 
 
 ### issues:
