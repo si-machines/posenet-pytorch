@@ -3,27 +3,25 @@
 # Recorder.py
 # Class to faciliate listener functions for posenet_wrapper ROS package.
 # Author: Matthew Yu
-# Last Modified: 1/7/20
+# Last Modified: 2/21/20
 # Organization: UT Austin SIMLab
-DIST = 'kinetic' # replace based on current ROS distribution (melodic, etc)
 
+import config as c
+
+# ros specific imports
 import rospy
 from posenet_wrapper.msg import Pose
 
 import sys
-sys.path.remove('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
-import time
+sys.path.remove('/opt/ros/' + c.DIST + '/lib/python2.7/dist-packages')
 import datetime
+
+import time
+import cv2
 import argparse
 import numpy as np
 import posenet
-import cv2
-sys.path.append('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
-
-PATH = "./src/posenet_wrapper/frame_data_example/"
-FREQ = 5
-SCREEN_WIDTH=480
-SCREEN_HEIGHT=640
+sys.path.append('/opt/ros/' + c.DIST + '/lib/python2.7/dist-packages')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--mode', type=int, default=0) # default multishot
@@ -35,7 +33,7 @@ class Recorder(object):
     """
     lock = False
     data_points = []
-    empty_canvas = np.zeros((SCREEN_WIDTH,SCREEN_HEIGHT,3), dtype="uint8")
+    empty_canvas = np.zeros((c.SCREEN_WIDTH,c.SCREEN_HEIGHT,3), dtype="uint8")
     overlay_image = empty_canvas.copy()
 
     def __init__(self):
@@ -95,7 +93,7 @@ class Recorder(object):
         """
         data save function into pickle format.
         """
-        np.asarray(data).dump(PATH + file_name)
+        np.asarray(data).dump(c.PATH + file_name)
         print("Data saved to", file_name)
 
     def load_data(self, file_name):
@@ -128,7 +126,7 @@ class Recorder(object):
             self.empty_canvas,
             np.asarray(list(self.data_points[1])),    # pose scores
             np.asarray([list(self.data_points[2])]),    # keypoint scores
-            np.asarray([posenet.center_of_gravity_2(coords,SCREEN_WIDTH,SCREEN_HEIGHT)]),    # keypoint coords
+            np.asarray([posenet.center_of_gravity_2(coords,c.SCREEN_WIDTH,c.SCREEN_HEIGHT)]),    # keypoint coords
             min_pose_score=0.15, min_part_score=0.1)
 
         # Show image
@@ -137,7 +135,7 @@ class Recorder(object):
             cv2.imshow('posenet', self.overlay_image)
             k = cv2.waitKey(0) & 0xFF
             if (k == 27 or k == 32 or k == 113):
-                break;
+                break
         cv2.destroyAllWindows()
 
     def draw_pose_2(self, frame):
@@ -175,7 +173,7 @@ class Recorder(object):
             cv2.imshow('posenet', image)
             k = cv2.waitKey(0) & 0xFF
             if (k == 27 or k == 32 or k == 113):
-                break;
+                break
         cv2.destroyAllWindows()
 
     def label_self(self, file_name, label):
@@ -212,7 +210,7 @@ class Recorder(object):
             time.sleep(recording_time)
         else:
             print("Recording. Listening for a single frame.")
-            time.sleep(1/FREQ)
+            time.sleep(1/c.FREQ)
 
         # don't kill the remaining callbacks, if any, until all processes finish.
         while(self.lock):

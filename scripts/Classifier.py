@@ -4,29 +4,29 @@
 # Author: Michelle Wen
 # Last Modified: 1/20/2020
 # Organization: UT Austin SIMLab
-DIST = 'kinetic' # replace based on current ROS distribution (melodic, etc)
-USER = 'moe'
+
+import config as c
+
+# ros specific imports
 import rospy
 from posenet_wrapper.msg import Pose
 from std_msgs.msg import String
 
-import sys
 import os
-
-sys.path.remove('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
+import sys
+sys.path.remove('/opt/ros/' + c.DIST + '/lib/python2.7/dist-packages')
 #sys.path.append("/home/${USER}/anaconda3/lib/python3.7/site-packages")
 import glob
-import argparse
-import numpy as np
 import math
 import statistics
-import posenet
-import cv2
-#sys.path.remove("/home/${USER}/anaconda3/lib/python3.7/site-packages")
-sys.path.append('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
 
-PATH = "../frame_data_example"
-FREQ = 5
+import cv2
+import argparse
+import numpy as np
+import posenet
+#sys.path.remove("/home/${USER}/anaconda3/lib/python3.7/site-packages")
+sys.path.append('/opt/ros/' + c.DIST + '/lib/python2.7/dist-packages')
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--mode', type=int, default=0)  # default multishot
@@ -39,7 +39,7 @@ class Classifier(object):
 
     def __init__(self):
         rospy.init_node('classifier', anonymous=True)
-        self.load_data(PATH)
+        self.load_data(c.PATH)
         self.publisher = rospy.Publisher('classifications', String, queue_size=10)
         self.subscriber = rospy.Subscriber('posenet', Pose, self.cb_classify)
 
@@ -124,13 +124,13 @@ class Classifier(object):
         # classified_pose = "pose2"
         return classified_pose
 
-    def load_data(self, path_name):
+    def load_data(self, path_name): # TODO: see if adjusted path variable still works
         """
         - dir_name is directory to all frame files
         - each frame is represented as a list of values [integer, tuple, tuple, tuple, string]
         """
         for file_name in os.listdir(path_name):
-            file_path = path_name + '/' + file_name
+            file_path = path_name + file_name
             try:
                 frame = np.load(file_path, allow_pickle=True)
                 self.library.append(frame)
@@ -139,7 +139,7 @@ class Classifier(object):
 
         """
         # debugging
-        file_path = PATH + '/' + "2019-12-02_s1385_f4157"
+        file_path = PATH + "2019-12-02_s1385_f4157"
         frame = np.load(file_path, allow_pickle=True)
         self.library.append(frame)
         """
