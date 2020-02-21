@@ -91,7 +91,7 @@ class Classifier(object):
         # raw_coords_list = self.data_points[3]
         raw_coords_list = coord_points
         dist_table = []
-        k = 3
+        k = 2 #int(math.sqrt(len(self.library)))
         k_nearest_labels = []
 
         for labeled_pose in self.library:

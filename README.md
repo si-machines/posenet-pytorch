@@ -9,11 +9,12 @@
 * Explore UT demo
   - [x] get algorithm to run on Poli2
     - [x] display name of pose on external monitor(?)
-    - [ ] display name of pose on Poli2's screen
+    - [x] display name of pose on Poli2's screen
   - [ ] change robot face in response to specific poses
 * optimizing KNN algorithm
   - [ ] asymmetric tolerance - flip every image horizontally and run KNN twice; take the best result
   - [ ] limb scaling - take an average ratio of limbs given current data; for new data take the length of one limb (say the torso) and scale all limbs according to that
+  - [ ] distance scaling
 * Data
   - [ ] reconfigure talker.py to accept still frames of poses and send them to Recorder.py to build a better data set
 
