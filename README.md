@@ -13,7 +13,7 @@
   - [ ] change robot face in response to specific poses
   - [ ] only change name of pose on screen if different pose(?)
 * optimizing KNN algorithm
-  - [ ] asymmetric tolerance - flip every image horizontally and run KNN twice; take the best result
+  - [x] asymmetric tolerance - flip every image horizontally and run KNN twice; take the best result
   - [x] limb scaling - take an average ratio of limbs given current data; for new data take the length of one limb (say the torso) and scale all limbs according to that
   - [x] distance scaling
 * Data
