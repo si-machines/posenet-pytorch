@@ -92,11 +92,15 @@ class Classifier(object):
         """
         nearest neighbors implementation between captured pose and self.library
         """
+        if len(self.library) == 0:
+            classified_pose = "None, no labeled data"
+            return
+
         # raw_coords_list = self.data_points[3]
         raw_coords_list = coord_points
         dist_table = []
-        k = 2
-        # k = int(math.sqrt(len(self.library))) # good if we have more than sqrt(n) of each pose
+        k = 3
+        # k = int(math.sqrt(len(self.library))) # if we have more than sqrt(n) of each pose
         k_nearest_labels = []
 
         for labeled_pose in self.library:
@@ -118,15 +122,11 @@ class Classifier(object):
         for pose in k_nearest_distances:
             k_nearest_labels.append(pose[1])
 
-        if k_nearest_labels == []:
-            classified_pose = "No labeled data"
-        else:
-            try:
-                classified_pose = statistics.mode(k_nearest_labels)
-            except:
-                classified_pose = k_nearest_labels[0]
+        try:
+            classified_pose = statistics.mode(k_nearest_labels)
+        except:
+            classified_pose = k_nearest_labels[0]
 
-        # classified_pose = "pose2"
         return classified_pose
 
     def load_data(self, path_name):
@@ -140,6 +140,11 @@ class Classifier(object):
                 frame = np.load(file_path, allow_pickle=True)
                 scaled_frame = posenet.scaling(frame[3])    # frame should be centered
                 frame[3] = scaled_frame
+                frame[4] = frame[4].upper()     # convert all labels to uppercase
+                self.library.append(frame)
+                # append flipped version of the pose
+                flipped = posenet.flip_vertically(frame[3])
+                frame[3] = flipped
                 self.library.append(frame)
             except:
                 pass
