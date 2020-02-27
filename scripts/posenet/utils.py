@@ -202,3 +202,11 @@ def scaling(key_points):
     key_points = tuple(key_points)
 
     return key_points
+
+# flip keypoints across y-axis
+def flip_vertically(key_points):
+    key_points = list(key_points)
+    for index in range(0,len(key_points),2):
+        key_points[index] *= -1
+    key_points = tuple(key_points)
+    return key_points
