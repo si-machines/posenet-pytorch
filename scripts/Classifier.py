@@ -9,6 +9,7 @@ USER = 'moe'
 import rospy
 from posenet_wrapper.msg import Pose
 from std_msgs.msg import String
+import config
 
 import sys
 import os
@@ -25,7 +26,7 @@ import cv2
 #sys.path.remove("/home/${USER}/anaconda3/lib/python3.7/site-packages")
 sys.path.append('/opt/ros/' + DIST + '/lib/python2.7/dist-packages')
 
-PATH = "../frame_data_example"
+PATH = config.PATH
 # PATH = "/home/" + USER + "/catkin_ws/src/posenet_wrapper/frame_data_example"
 FREQ = 5
 
@@ -67,7 +68,9 @@ class Classifier(object):
         classified_pose = self.knn(scaled_points)
 
         # publish result to a topic
-        print("Classified pose: " + classified_pose)
+        os.system('clear')
+        print("Classified pose: ")
+        print(classified_pose)
         # rospy.loginfo(classified_pose)
         self.publisher.publish(classified_pose)
 
@@ -99,7 +102,7 @@ class Classifier(object):
         # raw_coords_list = self.data_points[3]
         raw_coords_list = coord_points
         dist_table = []
-        k = 3
+        k = 2
         # k = int(math.sqrt(len(self.library))) # if we have more than sqrt(n) of each pose
         k_nearest_labels = []
 
@@ -138,14 +141,15 @@ class Classifier(object):
             file_path = path_name + '/' + file_name
             try:
                 frame = np.load(file_path, allow_pickle=True)
-                scaled_frame = posenet.scaling(frame[3])    # frame should be centered
+                centered = posenet.center_of_gravity(frame[3])
+                scaled_frame = posenet.scaling(centered)    # frame should be centered
                 frame[3] = scaled_frame
                 frame[4] = frame[4].upper()     # convert all labels to uppercase
                 self.library.append(frame)
                 # append flipped version of the pose
-                flipped = posenet.flip_vertically(frame[3])
-                frame[3] = flipped
-                self.library.append(frame)
+                # flipped = posenet.flip_vertically(scaled_frame)
+                # frame[3] = flipped
+                # self.library.append(frame)
             except:
                 pass
 

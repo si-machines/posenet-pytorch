@@ -174,10 +174,10 @@ def get_torso_length(coord_points):
     [22],[23] = left hip (11)
     [24],[25] = right hip (12)
     """
-    shoulder_x = (coord_points[10] + coord_points[12]) / 2
-    shoulder_y = (coord_points[11] + coord_points[13]) / 2
-    hip_x = (coord_points[22] + coord_points[24]) / 2
-    hip_y = (coord_points[23] + coord_points[25]) / 2
+    shoulder_x = (coord_points[10] + coord_points[12]) / float(2)
+    shoulder_y = (coord_points[11] + coord_points[13]) / float(2)
+    hip_x = (coord_points[22] + coord_points[24]) / float(2)
+    hip_y = (coord_points[23] + coord_points[25]) / float(2)
     torso_distance = math.sqrt(((shoulder_x - hip_x) ** 2) + ((shoulder_y - hip_y) ** 2))
 
     return torso_distance
@@ -192,7 +192,7 @@ def scaling(key_points):
     'leftHip', 'rightHip', 'leftKnee', 'rightKnee', 'leftAnkle', 'rightAnkle'
     """
     torso_length = get_torso_length(key_points)
-    ratio = 1 / torso_length
+    ratio = float(1) / torso_length
 
     # multiply every xy coordinate by the ratio
     key_points = list(key_points)

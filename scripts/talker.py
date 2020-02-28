@@ -95,12 +95,14 @@ def talker():
 
                 # grab only the first pose, if it exists
                 if(pose_scores[0] != 0.0):
+                    print("Incoming!")
                     # filter out incomplete frames
                     complete = True
                     for part in keypoint_scores[0]:
-                        if(part <= .4): # .4 is an arbitrary threshold in which a part can be identified as part of the pose with 40% confidence.
+                        if(part <= .3): # .4 is an arbitrary threshold in which a part can be identified as part of the pose with 40% confidence.
                             complete = False
                     if(complete):
+                        print("Passed!")
                         data = Pose()
                         data.header.frame_id    = str(frame_count)
                         data.header.stamp.secs  = int(time.time() - start)
