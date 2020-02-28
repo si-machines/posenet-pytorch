@@ -94,7 +94,7 @@ class Classifier(object):
         """
         if len(self.library) == 0:
             classified_pose = "None, no labeled data"
-            return
+            return classified_pose
 
         # raw_coords_list = self.data_points[3]
         raw_coords_list = coord_points
