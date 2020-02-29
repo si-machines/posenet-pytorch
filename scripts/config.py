@@ -5,7 +5,7 @@
 # Author: Matthew Yu
 # Last Modified: 2/21/20
 # Organization: UT Austin SIMLab
-DIST = 'melodic' # replace based on current ROS distribution (melodic, etc)
+DIST = 'kinetic' # replace based on current ROS distribution (melodic, etc)
 FREQ = 5         # frequency that the camera grabs frames
 SCREEN_WIDTH = 848   # default expectation that Recorder will project onto a canvas
 SCREEN_HEIGHT = 480 # default expectation that Recorder will project onto a canvas

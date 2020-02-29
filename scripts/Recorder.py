@@ -216,6 +216,8 @@ class Recorder(object):
         while(self.lock):
             self.enable_cb(False)
 
+        time.sleep(1)
+
         print("End recording.")
         end = input("Press enter to exit.")
 

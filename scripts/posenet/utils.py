@@ -3,6 +3,7 @@ import numpy as np
 
 import os
 import posenet.constants
+import math
 
 import sys
 sys.path.append("../")
@@ -157,13 +158,64 @@ def center_of_gravity_2(keypoint_coords, SCREEN_WIDTH, SCREEN_HEIGHT):
     # return tuple(adjusted_list)
     print(adjusted_list)
     return adjusted_list
-# example: path_name = "/home/" + USER + "/catkin_ws/src/posenet_wrapper/frame_data_example"
+
+# example path_name = "/home/" + USER + "/catkin_ws/src/posenet_wrapper/frame_data_example"
 def list_saved_poses(path_name):
+    num_saved = 0
     print("Saved poses: ")
     for file_name in os.listdir(path_name):
         file_path = path_name + '/' + file_name
         try:
             frame = np.load(file_path, allow_pickle=True)
             print(frame[4])
+            num_saved += 1
         except:
             pass
+    print("Number of poses: ", num_saved)
+
+# gets torso length of pose from middle top to middle bottom of torso square
+def get_torso_length(coord_points):
+    """
+    indices of torso coordinates:
+      x , y
+    [10],[11] = left shoulder (5)
+    [12],[13] = right shoulder (6)
+    [22],[23] = left hip (11)
+    [24],[25] = right hip (12)
+    """
+    shoulder_x = (coord_points[10] + coord_points[12]) / float(2)
+    shoulder_y = (coord_points[11] + coord_points[13]) / float(2)
+    hip_x = (coord_points[22] + coord_points[24]) / float(2)
+    hip_y = (coord_points[23] + coord_points[25]) / float(2)
+    torso_distance = math.sqrt(((shoulder_x - hip_x) ** 2) + ((shoulder_y - hip_y) ** 2))
+
+    return torso_distance
+
+# scale the pose to have torso of length 1
+def scaling(key_points):
+    """
+    scales the pose according to the origin
+
+    'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar', 'leftShoulder',
+    'rightShoulder', 'leftElbow', 'rightElbow', 'leftWrist', 'rightWrist',
+    'leftHip', 'rightHip', 'leftKnee', 'rightKnee', 'leftAnkle', 'rightAnkle'
+    """
+    torso_length = get_torso_length(key_points)
+    ratio = float(1) / torso_length
+
+    # multiply every xy coordinate by the ratio
+    key_points = list(key_points)
+    for index in range(len(key_points)):
+        key_points[index] *= ratio
+
+    key_points = tuple(key_points)
+
+    return key_points
+
+# flip keypoints across y-axis
+def flip_vertically(key_points):
+    key_points = list(key_points)
+    for index in range(0,len(key_points),2):
+        key_points[index] *= -1
+    key_points = tuple(key_points)
+    return key_points
