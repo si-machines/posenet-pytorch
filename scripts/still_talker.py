@@ -46,7 +46,7 @@ def talker():
     frame_count = 0
 
     # setup image set
-    dataset = 
+    dataset = []
 
     # Grab next image
     for image in dataset:

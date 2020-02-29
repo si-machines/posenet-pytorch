@@ -7,6 +7,7 @@
 # Organization: UT Austin SIMLab
 DIST = 'melodic' # replace based on current ROS distribution (melodic, etc)
 FREQ = 5         # frequency that the camera grabs frames
-SCREEN_WIDTH= 480   # default expectation that Recorder will project onto a canvas
-SCREEN_HEIGHT = 640 # default expectation that Recorder will project onto a canvas
+SCREEN_WIDTH = 848   # default expectation that Recorder will project onto a canvas
+SCREEN_HEIGHT = 480 # default expectation that Recorder will project onto a canvas
 PATH = "./src/posenet_wrapper/frame_data_example/"
+RESOLUTION_OVERRIDE = False

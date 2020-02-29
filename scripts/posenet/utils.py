@@ -4,9 +4,18 @@ import numpy as np
 import os
 import posenet.constants
 
+import sys
+sys.path.append("../")
+import config
+
 def valid_resolution(width, height, output_stride=16):
     target_width = (int(width) // output_stride) * output_stride + 1
     target_height = (int(height) // output_stride) * output_stride + 1
+
+    if config.RESOLUTION_OVERRIDE is True:
+        target_width = config.SCREEN_WIDTH
+        target_height = config.SCREEN_HEIGHT
+        
     return target_width, target_height
 
 

@@ -3,10 +3,8 @@
 # talker.py
 # Class to faciliate publishing valid poses from a camera for posenet_wrapper ROS package.
 # Author: Matthew Yu
-# Last Modified: 1/7/20
+# Last Modified: 2/28/20
 # Organization: UT Austin SIMLab
-
-import config as c
 
 import rospy
 from posenet_wrapper.msg import Pose
@@ -22,16 +20,18 @@ import cv2
 import argparse
 import numpy as np
 import posenet
+
+import config
 # import libraries for realsense D435
 import pyrealsense2 as rs
-sys.path.append('/opt/ros/' + c.DIST + '/lib/python2.7/dist-packages')
+sys.path.append('/opt/ros/' + config.DIST + '/lib/python2.7/dist-packages')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=int, default=101)
 parser.add_argument('--realsense', type=int, default=0)
 parser.add_argument('--cam_id', type=int, default=0)
-parser.add_argument('--cam_width', type=int, default=480)
-parser.add_argument('--cam_height', type=int, default=640)
+parser.add_argument('--cam_width', type=int, default=640)
+parser.add_argument('--cam_height', type=int, default=480)
 parser.add_argument('--scale_factor', type=float, default=0.7125)
 args = parser.parse_args()
 
@@ -44,13 +44,13 @@ def talker():
         # setup realsense camera
         pipeline = rs.pipeline()
         config = rs.config()
-        config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+        config.enable_stream(rs.stream.color, args.cam_width, args.cam_height, rs.format.bgr8, 30)
         pipeline.start(config)
 
         # start up the publisher and node
         pub = rospy.Publisher('posenet', Pose, queue_size=10)
         rospy.init_node('talker', anonymous=True)
-        rate = rospy.Rate(c.FREQ)
+        rate = rospy.Rate(config.FREQ)
         start = time.time()
         frame_count = 0
         try:
@@ -66,7 +66,7 @@ def talker():
 
                 #480 by 640
                 input_image, display_image, output_scale = posenet.read_cap(
-                    color_image, realsense=True, scale_factor=0.7125, output_stride=output_stride)
+                    color_image, realsense=True, scale_factor=args.scale_factor, output_stride=output_stride)
 
                 with torch.no_grad():
                     input_image = torch.Tensor(input_image)
@@ -118,20 +118,35 @@ def talker():
             pub.publish("Shutting down.")
 
     else:
+        resize_flag = False
+        scale_width = 0
+        scale_height = 0
         # setup integrated camera
         cap = cv2.VideoCapture(args.cam_id)
-        cap.set(3, args.cam_width)
-        cap.set(4, args.cam_height)
+        if not cap.isOpened():
+            raise Exception("Could not open video device " + str(args.cam_id))
+        
+        global config
+        # set frame size properties
+        if cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.cam_width) is False:
+            print("Failure to set camera resolution. RESOLUTION_OVERRIDE flag enabled.")
+            config.RESOLUTION_OVERRIDE = True
+        
+        if cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.cam_height) is False:
+            print("Failure to set camera resolution. RESOLUTION_OVERRIDE flag enabled.")
+            config.RESOLUTION_OVERRIDE = True
+
+        print(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
         # start up the publisher and node
         pub = rospy.Publisher('posenet', Pose, queue_size=10)
         rospy.init_node('talker', anonymous=True)
-        rate = rospy.Rate(c.FREQ)
+        rate = rospy.Rate(config.FREQ)
         start = time.time()
         frame_count = 0
         try:
             while not rospy.is_shutdown():
-                #480 by 640
                 input_image, display_image, output_scale = posenet.read_cap(
                     cap, scale_factor=args.scale_factor, output_stride=output_stride)
 

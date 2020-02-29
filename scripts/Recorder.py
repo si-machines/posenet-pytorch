@@ -6,14 +6,14 @@
 # Last Modified: 2/21/20
 # Organization: UT Austin SIMLab
 
-import config as c
+import config
 
 # ros specific imports
 import rospy
 from posenet_wrapper.msg import Pose
 
 import sys
-sys.path.remove('/opt/ros/' + c.DIST + '/lib/python2.7/dist-packages')
+sys.path.remove('/opt/ros/' + config.DIST + '/lib/python2.7/dist-packages')
 import datetime
 
 import time
@@ -21,7 +21,7 @@ import cv2
 import argparse
 import numpy as np
 import posenet
-sys.path.append('/opt/ros/' + c.DIST + '/lib/python2.7/dist-packages')
+sys.path.append('/opt/ros/' + config.DIST + '/lib/python2.7/dist-packages')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--mode', type=int, default=0) # default multishot
@@ -33,7 +33,7 @@ class Recorder(object):
     """
     lock = False
     data_points = []
-    empty_canvas = np.zeros((c.SCREEN_WIDTH,c.SCREEN_HEIGHT,3), dtype="uint8")
+    empty_canvas = np.zeros((config.SCREEN_WIDTH,config.SCREEN_HEIGHT,3), dtype="uint8")
     overlay_image = empty_canvas.copy()
 
     def __init__(self):
@@ -93,7 +93,7 @@ class Recorder(object):
         """
         data save function into pickle format.
         """
-        np.asarray(data).dump(c.PATH + file_name)
+        np.asarray(data).dump(config.PATH + file_name)
         print("Data saved to", file_name)
 
     def load_data(self, file_name):
@@ -126,7 +126,7 @@ class Recorder(object):
             self.empty_canvas,
             np.asarray(list(self.data_points[1])),    # pose scores
             np.asarray([list(self.data_points[2])]),    # keypoint scores
-            np.asarray([posenet.center_of_gravity_2(coords,c.SCREEN_WIDTH,c.SCREEN_HEIGHT)]),    # keypoint coords
+            np.asarray([posenet.center_of_gravity_2(coords,config.SCREEN_WIDTH,config.SCREEN_HEIGHT)]),    # keypoint coords
             min_pose_score=0.15, min_part_score=0.1)
 
         # Show image
@@ -210,7 +210,7 @@ class Recorder(object):
             time.sleep(recording_time)
         else:
             print("Recording. Listening for a single frame.")
-            time.sleep(1/c.FREQ)
+            time.sleep(1/config.FREQ)
 
         # don't kill the remaining callbacks, if any, until all processes finish.
         while(self.lock):
